@@ -91,7 +91,7 @@ package("llvm")
         local build_type = {
             ["debug"] = "Debug",
             ["release"] = "Release",
-            ["releasedbg"] = "RELWITHDEBINFO",
+            ["releasedbg"] = "RelWithDebInfo",
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (build_type[package:config("mode")]))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -181,7 +181,7 @@ package("llvm")
             package:arch(),
             package:plat(),
             abi,
-            package:is_debug() and "debug" or "release",
+            package:config("mode"),
         }, "-")
 
         if package:config("lto") then
