@@ -3,6 +3,7 @@ set_policy("compatibility.version", "3.0")
 add_requires("llvm", {
     system = false,
     configs = {
+        mode = get_config("mode"),
         debug = is_mode("debug"),
         shared = is_mode("debug") and not is_plat("windows"),
     },
@@ -21,14 +22,12 @@ if is_mode("debug") then
 end
 
 package("llvm")
-    set_urls("https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/llvm-project-$(version).src.tar.xz",
-             "https://github.com/llvm/llvm-project.git", {includes = sparse_checkout_list})
+    add_urls("https://github.com/llvm/llvm-project.git", {alias = "git", includes = sparse_checkout_list})
 
-    add_versions("20.1.5", "a069565cd1c6aee48ee0f36de300635b5781f355d7b3c96a28062d50d575fa3e")
+    add_versions("git:21.1.4", "llvmorg-21.1.4")
+    add_versions("git:20.1.5", "llvmorg-20.1.5")
 
-    if is_plat("windows") then
-        add_configs("debug", {description = "Enable debug symbols.", default = false, type = "boolean", readonly = true})
-    end
+    add_configs("mode", {description = "Build type", default = "releasedbg", type = "string", values = {"debug", "release", "releasedbg"}})
 
     if is_plat("windows", "mingw") then
         add_syslinks("version", "ntdll")
@@ -88,7 +87,13 @@ package("llvm")
 
             -- "-DLLVM_ENABLE_PROJECTS=clang",
         }
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+
+        local build_type = {
+            ["debug"] = "Debug",
+            ["release"] = "Release",
+            ["releasedbg"] = "RELWITHDEBINFO",
+        }
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (build_type[package:config("mode")]))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DLLVM_ENABLE_LTO=" .. (package:config("lto") and "ON" or "OFF"))
         if package:config("lto") then

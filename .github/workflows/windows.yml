@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - build_type: release
+          - build_type: releasedbg
             runtimes: MD
             lto: "n"
           - build_type: release
