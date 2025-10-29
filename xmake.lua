@@ -114,6 +114,7 @@ package("llvm")
         end
 
         if package:is_plat("macosx") then
+            table.insert(configs, "-DLLVM_ENABLE_LIBCXX=ON")
             table.insert(configs, "-DLLVM_TARGETS_TO_BUILD=AArch64")
             table.insert(configs, "-DCMAKE_OSX_ARCHITECTURES=arm64")
             table.insert(configs, "-DCMAKE_LIBTOOL=/opt/homebrew/opt/llvm@20/bin/llvm-libtool-darwin")
