@@ -24,11 +24,11 @@ jobs:
     steps:
       - name: Setup llvm
         run: |
-          brew install llvm@21
+          brew install llvm@20
 
       - name: Install lld
         run: |
-          brew install lld@21
+          brew install lld@20
 
       - name: Setup python
         run: |
@@ -51,6 +51,7 @@ jobs:
 
       - name: Package
         run: |
+          export SDKROOT=$(xcrun --sdk macosx --show-sdk-path)
           export PATH="/opt/homebrew/opt/llvm@21/bin:/opt/homebrew/opt/lld@21/bin:$PATH"
           xmake config --yes --verbose --toolchain=clang --mode=${{ matrix.build_type }} --policies=build.optimization.lto:${{ matrix.lto }}
 
