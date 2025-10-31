@@ -88,6 +88,8 @@ package("llvm")
 
             -- "-DLLVM_ENABLE_PROJECTS=clang",
             "-DLLVM_PARALLEL_LINK_JOBS=1",
+            -- Build job and link job together will oom
+            "-DCMAKE_JOB_POOL_LINK=console",
         }
 
         local build_type = {
