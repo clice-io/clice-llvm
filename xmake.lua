@@ -94,8 +94,10 @@ package("llvm")
 
             "-DLLVM_ENABLE_PROJECTS=clang;clang-tools-extra",
 
-            -- Only build native target
-            "-DLLVM_TARGETS_TO_BUILD=Native"
+            -- Build all targets, this will affect the builtin type generation.
+            -- Users might use a cross-compiler, and to ensure clang works in 
+            -- that scenario, we have to build all targets.
+            "-DLLVM_TARGETS_TO_BUILD=all"
         }
 
         local build_type = {
