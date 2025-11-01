@@ -116,6 +116,7 @@ package("llvm")
             table.insert(configs, "-DCMAKE_CXX_COMPILER=clang-cl")
         elseif package:is_plat("linux") then
             table.insert(configs, "-DLLVM_USE_LINKER=lld")
+            -- table.insert(configs, "-DLLVM_USE_SPLIT_DWARF=ON")
         elseif package:is_plat("macosx") then
             table.insert(configs, "-DCMAKE_OSX_ARCHITECTURES=arm64")
             table.insert(configs, "-DCMAKE_LIBTOOL=/opt/homebrew/opt/llvm@20/bin/llvm-libtool-darwin")

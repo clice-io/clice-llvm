@@ -2,7 +2,7 @@ name: macos
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -14,8 +14,8 @@ jobs:
             lto: "n"
           - build_type: releasedbg
             lto: "n"
-          - build_type: releasedbg
-            lto: "y"
+          # - build_type: releasedbg
+          #   lto: "y"
 
     concurrency:
       group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-macos-${{ matrix.build_type }}-${{ matrix.lto }}
@@ -24,11 +24,7 @@ jobs:
     steps:
       - name: Setup llvm
         run: |
-          brew install llvm@20
-
-      - name: Install lld
-        run: |
-          brew install lld@20
+          brew install llvm@20 lld@20
 
       - name: Setup python
         run: |
@@ -42,12 +38,6 @@ jobs:
       - name: Setup xmake
         run: |
           brew install xmake
-
-      # - name: Setup xmake
-      #   uses: xmake-io/github-action-setup-xmake@v1
-      #   with:
-      #     xmake-version: '2.9.9'
-      #     actions-cache-folder: '.xmake-cache'
 
       - name: Package
         run: |
