@@ -140,6 +140,7 @@ package("llvm")
         end
 
         local opt = {}
+        opt.jobs = "4"
         opt.target = {
             "LLVMSupport",
             "LLVMFrontendOpenMP",
@@ -210,7 +211,7 @@ package("llvm")
 
         local opt = {}
         opt.recurse = true
-        opt.compress = "best"
+        -- opt.compress = "best"
         opt.curdir = package:installdir()
 
         local archive_dirs
