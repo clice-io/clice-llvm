@@ -14,6 +14,7 @@ local sparse_checkout_list = {
     "llvm",
     "clang",
     "clang-tools-extra",
+    "third-party",
 }
 
 -- TODO: If we need compiler-rt builtin-headers, then we need to enable them.
@@ -25,7 +26,7 @@ local sparse_checkout_list = {
 package("llvm")
     add_urls("https://github.com/llvm/llvm-project.git", {alias = "git", includes = sparse_checkout_list})
 
-    add_versions("git:21.1.4", "llvmorg-21.1.4")
+    add_versions("git:21.1.4", "222fc11f2b8f25f6a0f4976272ef1bb7bf49521d")
     add_versions("git:20.1.5", "llvmorg-20.1.5")
 
     add_configs("mode", {description = "Build type", default = "releasedbg", type = "string", values = {"debug", "release", "releasedbg"}})
@@ -67,22 +68,41 @@ package("llvm")
         end
         io.replace("clang-tools-extra/CMakeLists.txt", "add_subdirectory(modularize)", "", {plain = true})
         io.replace("clang-tools-extra/CMakeLists.txt", "add_subdirectory(pp-trace)", "", {plain = true})
+        io.replace("clang-tools-extra/CMakeLists.txt", "add_subdirectory(tool-template)", "", {plain = true})
+
+        io.replace("llvm/tools/CMakeLists.txt", "add_llvm_tool_subdirectory(lto)", "", {plain = true})
+        io.replace("llvm/tools/CMakeLists.txt", "add_llvm_implicit_projects()", "", {plain = true})
 
         local configs = {
-            "-DLLVM_INCLUDE_DOCS=OFF",
-            "-DLLVM_INCLUDE_TESTS=OFF",
-            "-DLLVM_INCLUDE_EXAMPLES=OFF",
-            "-DLLVM_INCLUDE_BENCHMARKS=OFF",
-
-            -- "-DCLANG_BUILD_TOOLS=OFF",
-            -- "-DLLVM_INCLUDE_TOOLS=OFF",
-            "-DLLVM_BUILD_TOOLS=OFF",
-            "-DLLVM_BUILD_UTILS=OFF",
-            "-DCLANG_ENABLE_CLANGD=OFF",
-
             "-DLLVM_ENABLE_ZLIB=OFF",
             "-DLLVM_ENABLE_ZSTD=OFF",
             "-DLLVM_ENABLE_LIBXML2=OFF",
+            "-DLLVM_ENABLE_BINDINGS=OFF",
+            "-DLLVM_ENABLE_IDE=ON",
+            "-DLLVM_ENABLE_ZSTD=OFF",
+            "-DLLVM_ENABLE_Z3_SOLVER=OFF",
+            "-DLLVM_ENABLE_LIBEDIT=OFF",
+            "-DLLVM_ENABLE_LIBPFM=OFF",
+            "-DLLVM_ENABLE_LIBXML2=OFF",
+            "-DLLVM_ENABLE_OCAMLDOC=OFF",
+            "-DLLVM_ENABLE_PLUGINS=OFF",
+            "-DLLVM_INCLUDE_UTILS=OFF",
+            "-DLLVM_INCLUDE_TESTS=OFF",
+            "-DLLVM_INCLUDE_EXAMPLES=OFF",
+            "-DLLVM_INCLUDE_BENCHMARKS=OFF",
+            "-DLLVM_INCLUDE_DOCS=OFF",
+            "-DLLVM_BUILD_UTILS=OFF",
+            "-DLLVM_BUILD_TOOLS=OFF",
+            -- "-DLLVM_INCLUDE_TOOLS=OFF",
+            "-DCLANG_BUILD_TOOLS=OFF",
+            "-DCLANG_INCLUDE_DOCS=OFF",
+            "-DCLANG_INCLUDE_TESTS=OFF",
+            "-DCLANG_TOOL_CLANG_IMPORT_TEST_BUILD=OFF",
+            "-DCLANG_TOOL_CLANG_LINKER_WRAPPER_BUILD=OFF",
+            "-DCLANG_TOOL_C_INDEX_TEST_BUILD=OFF",
+            "-DCLANG_TOOL_LIBCLANG_BUILD=OFF",
+            "-DCLANG_ENABLE_CLANGD=OFF",
+            "-DLLVM_BUILD_LLVM_C_DYLIB=OFF",
 
             "-DLLVM_LINK_LLVM_DYLIB=OFF",
             "-DLLVM_ENABLE_RTTI=OFF",
