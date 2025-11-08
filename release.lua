@@ -38,9 +38,22 @@ function main()
         end
     end
 
+    local files = {}
+    table.join2(files, os.files(path.join(dir, "**.7z")))
+    table.join2(files, os.files(path.join(dir, "**.tar.xz")))
+
     local binaries = {}
-    table.join2(binaries, os.files(path.join(dir, "**.7z")))
-    table.join2(binaries, os.files(path.join(dir, "**.tar.xz")))
+    for _, i in ipairs(files) do
+        local file = io.open(i, "r")
+        local size, error = file:size()
+        -- github release limit 2 Gib
+        if size > 2 * 1024 * 1024 * 1024 then
+            print("%s > 2 Gib, skip", path.filename(i))
+            print(file)
+        else
+            table.insert(binaries, i)
+        end
+    end
 
     print(binaries)
 
