@@ -36,6 +36,10 @@ package("llvm")
 
     add_deps("cmake", "ninja", "python 3.x", {kind = "binary"})
 
+    if is_host("windows") then
+        set_policy("platform.longpaths", true)
+    end
+
     on_install(function (package)
         if not package:config("shared") then
             package:add("defines", "CLANG_BUILD_STATIC")
@@ -65,8 +69,8 @@ package("llvm")
         io.replace("clang-tools-extra/CMakeLists.txt", "add_subdirectory(pp-trace)", "", {plain = true})
         io.replace("clang-tools-extra/CMakeLists.txt", "add_subdirectory(tool-template)", "", {plain = true})
 
-        io.replace("llvm/lib/CMakeLists.txt", "add_subdirectory(LTO)", "", {plain = true})
-        io.replace("llvm/lib/CMakeLists.txt", "add_subdirectory(Remarks)", "", {plain = true})
+        io.replace("llvm/tools/CMakeLists.txt", "add_llvm_tool_subdirectory(lto)", "", {plain = true})
+        io.replace("llvm/tools/CMakeLists.txt", "add_llvm_implicit_projects()", "", {plain = true})
 
         local configs = {
             "-DLLVM_ENABLE_ZLIB=OFF",
@@ -88,7 +92,7 @@ package("llvm")
             "-DLLVM_INCLUDE_DOCS=OFF",
             "-DLLVM_BUILD_UTILS=OFF",
             "-DLLVM_BUILD_TOOLS=OFF",
-            "-DLLVM_INCLUDE_TOOLS=OFF",
+            -- "-DLLVM_INCLUDE_TOOLS=OFF",
             "-DCLANG_BUILD_TOOLS=OFF",
             "-DCLANG_INCLUDE_DOCS=OFF",
             "-DCLANG_INCLUDE_TESTS=OFF",
