@@ -22,7 +22,7 @@ function _get_require_libs(llvm_archive)
     os.mkdir("package")
     os.mkdir("package/backup")
     archive.extract(llvm_archive, "package/llvm")
-    -- Use -P to specify the clice project and avoid xmake finding parent directory xmake.lua
+    -- Use --project to specify the clice project and avoid xmake finding parent directory xmake.lua
     local argv = {
         "config",
         "--clean",
@@ -64,7 +64,7 @@ end
 
 -- @param llvm_archive string
 -- @param unused_libs array
--- @return unused_libs string
+-- @return archive_file string
 function _reduce_package_size(llvm_archive, unused_libs)
     os.tryrm("build")
     local workdir = "build/.pack"
@@ -128,6 +128,17 @@ function main()
     local origin_files = {}
     table.join2(origin_files, os.files(path.join(dir, "**.7z")))
     table.join2(origin_files, os.files(path.join(dir, "**.tar.xz")))
+
+    local unused_libs
+    for _, llvm_archive in ipairs(origin_files) do
+        if llvm_archive:find("releasedbg") and llvm_archive:find("lto_n") then
+            unused_libs = _get_require_libs(llvm_archive)
+            break
+        end
+    end
+    if not unused_libs then
+        print("No unused libs?")
+    end
 
     local files = {}
     for _, llvm_archive in ipairs(origin_files) do
