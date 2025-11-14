@@ -17,7 +17,7 @@ end
 -- @param llvm_archive string
 function _get_require_libs(llvm_archive)
     git.clone("https://github.com/clice-io/clice.git", {treeless = true})
-    os.cd("clice")
+    local old_dir = os.cd("clice")
 
     os.mkdir("package")
     os.mkdir("package/backup")
@@ -66,6 +66,8 @@ function _get_require_libs(llvm_archive)
         }
     end
     print("build %d libs, unused %d libs", #libs, #unused_libs)
+
+    os.cd(old_dir)
     return unused_libs
 end
 
