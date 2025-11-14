@@ -39,6 +39,7 @@ function _get_require_libs(llvm_archive)
         table.insert(argv, "--sdk=/opt/homebrew/opt/llvm@20")
     end
     os.vrunv(os.programfile(), argv)
+    os.vexecv(os.programfile(), {"--project=."})
 
     local unused_libs = {}
     local libs = table.join(os.files("build/.packages/**.lib"), os.files("build/.packages/**.a"))
@@ -74,7 +75,6 @@ end
 function _reduce_package_size(llvm_archive, unused_libs)
     os.tryrm("build")
     local workdir = "build/.pack"
-    os.mkdir(workdir)
     archive.extract(llvm_archive, workdir)
 
     for _, lib in ipairs(unused_libs) do
@@ -83,7 +83,7 @@ function _reduce_package_size(llvm_archive, unused_libs)
 
     local opt = {}
     opt.recurse = true
-    -- opt.compress = "best"
+    opt.compress = "best"
     opt.curdir = workdir
 
     local archive_dirs
@@ -145,6 +145,8 @@ function main()
     if not unused_libs then
         print("No unused libs?")
     end
+
+    print(origin_files)
 
     local files = {}
     for _, llvm_archive in ipairs(origin_files) do
