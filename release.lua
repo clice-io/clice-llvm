@@ -68,6 +68,7 @@ function _get_require_libs(llvm_archive)
     print("build %d libs, unused %d libs", #libs, #unused_libs)
 
     os.cd(old_dir)
+    os.rm("clice")
     return unused_libs
 end
 
@@ -75,8 +76,8 @@ end
 -- @param unused_libs array
 -- @return archive_file string
 function _reduce_package_size(llvm_archive, unused_libs)
-    os.tryrm("build")
     local workdir = "build/.pack"
+    os.tryrm(workdir)
     archive.extract(llvm_archive, workdir)
 
     for _, lib in ipairs(unused_libs) do
