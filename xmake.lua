@@ -73,6 +73,7 @@ package("llvm")
         io.replace("llvm/tools/CMakeLists.txt", "add_llvm_tool_subdirectory(lto)", "", {plain = true})
         io.replace("llvm/tools/CMakeLists.txt", "add_llvm_implicit_projects()", "", {plain = true})
 
+        local opt = {}
         local configs = {
             "-DLLVM_ENABLE_ZLIB=OFF",
             "-DLLVM_ENABLE_ZSTD=OFF",
@@ -129,12 +130,15 @@ package("llvm")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DLLVM_ENABLE_LTO=" .. (package:config("lto") and "ON" or "OFF"))
 
-        if package:toolchain("zig") then
+        if not package:is_plat("windows") and package:toolchain("zig") then
             local target
             if package:is_plat("linux") then
                 target = "x86_64-linux-gnu" 
             elseif package:is_plat("macosx") then
                 target = "aarch64-macos-none" 
+                -- workaround
+                -- @see https://github.com/ziglang/zig/issues/18357#issuecomment-1869102870
+                opt.cxflags = "-flld"
             end
             table.insert(configs, "-DLLVM_HOST_TRIPLE=" .. target)
         end
@@ -156,7 +160,6 @@ package("llvm")
             table.insert(configs, "-DLLVM_ENABLE_LIBCXX=ON")
         end
 
-        local opt = {}
         opt.target = {
             "LLVMSupport",
             "LLVMFrontendOpenMP",

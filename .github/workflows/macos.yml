@@ -23,8 +23,11 @@ jobs:
 
     steps:
       - name: Setup llvm
+        shell: bash
         run: |
-          brew install llvm@20 lld@20
+          if [[ "${{ matrix.lto }}" == "n" ]]; then
+            brew install llvm@20 lld@20
+          fi
 
       - name: Setup python
         run: |

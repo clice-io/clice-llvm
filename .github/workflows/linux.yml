@@ -62,7 +62,7 @@ jobs:
         shell: bash
         run: |
           if [[ "${{ matrix.lto }}" == "y" ]]; then
-            xrepo env --verbose --yes --bind="zig 0.15.2" xmake config --yes --verbose --toolchain=zig --mode=${{ matrix.build_type }} --policies=build.optimization.lto:${{ matrix.lto }}
+            xrepo env --verbose --yes --bind="zig 0.15.2" xmake config --yes --verbose --toolchain=zig --cross=x86_64-linux-gnu.2.17 --mode=${{ matrix.build_type }} --policies=build.optimization.lto:${{ matrix.lto }}
           else
             xmake config --yes --verbose --toolchain=clang-20 --mode=${{ matrix.build_type }} --policies=build.optimization.lto:${{ matrix.lto }}
           fi
