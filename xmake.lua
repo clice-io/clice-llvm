@@ -130,7 +130,7 @@ package("llvm")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DLLVM_ENABLE_LTO=" .. (package:config("lto") and "ON" or "OFF"))
 
-        if not package:is_plat("windows") and package:toolchain("zig") then
+        if not package:is_plat("windows") and package:has_tool("cxx", "zig_cc") then
             local target
             if package:is_plat("linux") then
                 target = "x86_64-linux-gnu" 
