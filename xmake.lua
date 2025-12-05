@@ -26,7 +26,7 @@ local sparse_checkout_list = {
 package("llvm")
     add_urls("https://github.com/llvm/llvm-project.git", {alias = "git", includes = sparse_checkout_list})
 
-    add_versions("git:21.1.4", "222fc11f2b8f25f6a0f4976272ef1bb7bf49521d")
+    add_versions("git:21.1.4", "llvmorg-21.1.4")
     add_versions("git:20.1.5", "llvmorg-20.1.5")
 
     add_configs("mode", {description = "Build type", default = "releasedbg", type = "string", values = {"debug", "release", "releasedbg"}})
@@ -73,6 +73,7 @@ package("llvm")
         io.replace("llvm/tools/CMakeLists.txt", "add_llvm_tool_subdirectory(lto)", "", {plain = true})
         io.replace("llvm/tools/CMakeLists.txt", "add_llvm_implicit_projects()", "", {plain = true})
 
+        local opt = {}
         local configs = {
             "-DLLVM_ENABLE_ZLIB=OFF",
             "-DLLVM_ENABLE_ZSTD=OFF",
@@ -129,6 +130,19 @@ package("llvm")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DLLVM_ENABLE_LTO=" .. (package:config("lto") and "ON" or "OFF"))
 
+        if not package:is_plat("windows") and package:has_tool("cxx", "zig_cc") then
+            local target
+            if package:is_plat("linux") then
+                target = "x86_64-linux-gnu" 
+            elseif package:is_plat("macosx") then
+                target = "aarch64-macos-none" 
+                -- workaround
+                -- @see https://github.com/ziglang/zig/issues/18357#issuecomment-1869102870
+                opt.cxflags = "-flld"
+            end
+            table.insert(configs, "-DLLVM_HOST_TRIPLE=" .. target)
+        end
+
         if package:config("mode") == "debug" then
             table.insert(configs, "-DLLVM_USE_SANITIZER=Address")
         end
@@ -146,7 +160,6 @@ package("llvm")
             table.insert(configs, "-DLLVM_ENABLE_LIBCXX=ON")
         end
 
-        local opt = {}
         opt.target = {
             "LLVMSupport",
             "LLVMFrontendOpenMP",

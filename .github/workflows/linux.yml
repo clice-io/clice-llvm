@@ -37,7 +37,7 @@ jobs:
       - name: Setup xmake
         uses: xmake-io/github-action-setup-xmake@v1
         with:
-          xmake-version: "2.9.9"
+          xmake-version: "3.0.5"
           actions-cache-folder: ".xmake-cache"
 
       - name: Increase Swap Space
@@ -59,8 +59,13 @@ jobs:
           df -h
 
       - name: Package
+        shell: bash
         run: |
-          xmake config --yes --verbose --toolchain=clang-20 --mode=${{ matrix.build_type }} --policies=build.optimization.lto:${{ matrix.lto }}
+          if [[ "${{ matrix.lto }}" == "y" ]]; then
+            xrepo env --verbose --yes --bind="zig 0.15.2" xmake config --yes --verbose --toolchain=zig --cross=x86_64-linux-gnu.2.17 --mode=${{ matrix.build_type }} --policies=build.optimization.lto:${{ matrix.lto }}
+          else
+            xmake config --yes --verbose --toolchain=clang-20 --mode=${{ matrix.build_type }} --policies=build.optimization.lto:${{ matrix.lto }}
+          fi
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
