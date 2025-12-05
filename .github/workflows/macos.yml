@@ -40,10 +40,15 @@ jobs:
           brew install xmake
 
       - name: Package
+        shell: bash
         run: |
           export SDKROOT=$(xcrun --sdk macosx --show-sdk-path)
           export PATH="/opt/homebrew/opt/llvm@20/bin:/opt/homebrew/opt/lld@20/bin:$PATH"
-          xmake config --yes --verbose --toolchain=clang --mode=${{ matrix.build_type }} --policies=build.optimization.lto:${{ matrix.lto }}
+          if [[ "${{ matrix.lto }}" == "y" ]]; then
+            xrepo env --verbose --yes --bind="zig 0.15.2" xmake config --yes --verbose --toolchain=zig --mode=${{ matrix.build_type }} --policies=build.optimization.lto:${{ matrix.lto }}
+          else
+            xmake config --yes --verbose --toolchain=clang --mode=${{ matrix.build_type }} --policies=build.optimization.lto:${{ matrix.lto }}
+          fi
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
