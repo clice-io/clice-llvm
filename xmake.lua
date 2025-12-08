@@ -133,12 +133,13 @@ package("llvm")
         if not package:is_plat("windows") and package:has_tool("cxx", "zig_cc") then
             local target
             if package:is_plat("linux") then
-                target = "x86_64-linux-gnu" 
+                target = "x86_64-linux-gnu"
             elseif package:is_plat("macosx") then
-                target = "aarch64-macos-none" 
-                -- workaround
-                -- @see https://github.com/ziglang/zig/issues/18357#issuecomment-1869102870
-                opt.cxflags = "-flld"
+                target = "aarch64-macos-none"
+                if package:config("lto") then
+                    opt.cxflags = "-Xclang -flto=thin" -- workaround
+                    table.insert(configs, "-DLLVM_ENABLE_LTO=OFF") -- don't pass -flto
+                end
             end
             table.insert(configs, "-DLLVM_HOST_TRIPLE=" .. target)
         end
