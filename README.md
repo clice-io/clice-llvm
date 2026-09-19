@@ -38,7 +38,7 @@ Numbered prefixes ensure deterministic order.
 
 | #    | Upstream | Description                                                                                                                                                                                                                        |
 | ---- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0001 | —        | Build libc++ on Windows without `_CRT_STDIO_ISO_WIDE_SPECIFIERS`. The UCRT refuses to link objects that disagree on it, and clice's dependencies (libuv) rely on the default MS semantics of `%s` in wide printf; libc++ itself does not depend on either. |
+| 0001 | —        | Build libc++ on Windows with `_CRT_STDIO_ARBITRARY_WIDE_SPECIFIERS` instead of `_CRT_STDIO_ISO_WIDE_SPECIFIERS`. The ISO define makes every object auto-link the UCRT initializer that switches the whole image to ISO wide `printf` specifiers, and the UCRT refuses to link objects that disagree on the mode; clice's dependencies (libuv) rely on the default MS semantics of `%s` in wide printf. libc++ only formats numbers with the wide printf family, so the mode-agnostic define the UCRT provides for static libraries is the right one. |
 
 ## Versioning
 

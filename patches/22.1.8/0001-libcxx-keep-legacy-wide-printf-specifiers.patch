@@ -1,16 +1,20 @@
 diff --git a/libcxx/CMakeLists.txt b/libcxx/CMakeLists.txt
-index 00ea2deef196..5f6bd483f2d7 100644
+index 00ea2deef196..720d4f21a3bf 100644
 --- a/libcxx/CMakeLists.txt
 +++ b/libcxx/CMakeLists.txt
-@@ -736,10 +736,7 @@ function(cxx_add_windows_flags target)
-                                  # Don't warn on the use of "deprecated"
+@@ -737,9 +737,12 @@ function(cxx_add_windows_flags target)
                                   # "insecure" functions which are standards
                                   # specified.
--                                 _CRT_SECURE_NO_WARNINGS
+                                  _CRT_SECURE_NO_WARNINGS
 -                                 # Use the ISO conforming behaviour for conversion
 -                                 # in printf, scanf.
 -                                 _CRT_STDIO_ISO_WIDE_SPECIFIERS)
-+                                 _CRT_SECURE_NO_WARNINGS)
++                                 # The library formats only numbers with the wide
++                                 # printf family, so it works with either wide
++                                 # specifier mode and must not force one on the
++                                 # program (the ISO define auto-links the
++                                 # initializer that switches the whole image).
++                                 _CRT_STDIO_ARBITRARY_WIDE_SPECIFIERS)
    endif()
  endfunction()
  
