@@ -10,8 +10,8 @@ Build infrastructure for the LLVM prebuilt packages that
 2. The workflow clones upstream LLVM at `llvmorg-$VERSION`.
 3. Patches from `patches/$VERSION/` in this repo are applied in order.
 4. LLVM is built across a 14-job matrix (3 OS x configurations).
-5. `release-llvm.yml` prunes unused libraries and publishes to this repo's
-   Releases as `$VERSION+rN`.
+5. `release-llvm.yml` publishes the build artifacts to this repo's Releases
+   as `$VERSION+rN`.
 
 See `/upgrade-llvm` in `clice-io/clice/.claude/commands/upgrade-llvm.md`.
 
@@ -21,6 +21,8 @@ See `/upgrade-llvm` in `clice-io/clice/.claude/commands/upgrade-llvm.md`.
 patches/
   21.1.8/
     0001-codegen-fix-illegal-std-template-specializations.patch
+  22.1.8/
+    0001-libcxx-keep-legacy-wide-printf-specifiers.patch
 ```
 
 Patches are `git apply`-compatible diffs against the upstream tag.
@@ -31,6 +33,12 @@ Numbered prefixes ensure deterministic order.
 | # | Upstream | Description |
 |---|----------|-------------|
 | 0001 | [PR #160804](https://github.com/llvm/llvm-project/pull/160804) | Fix illegal `std::less`/`std::equal_to` specializations in RDFRegisters. Required for libc++ 22 builds. |
+
+### 22.1.8
+
+| #    | Upstream | Description                                                                                                                                                                                                                        |
+| ---- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0001 | —        | Build libc++ on Windows without `_CRT_STDIO_ISO_WIDE_SPECIFIERS`. The UCRT refuses to link objects that disagree on it, and clice's dependencies (libuv) rely on the default MS semantics of `%s` in wide printf; libc++ itself does not depend on either. |
 
 ## Versioning
 
