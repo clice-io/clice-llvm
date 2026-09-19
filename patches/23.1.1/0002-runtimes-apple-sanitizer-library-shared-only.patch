@@ -1,0 +1,30 @@
+diff --git a/libcxx/src/CMakeLists.txt b/libcxx/src/CMakeLists.txt
+index e029f9f29d5e..77ea63e65f25 100644
+--- a/libcxx/src/CMakeLists.txt
++++ b/libcxx/src/CMakeLists.txt
+@@ -141,7 +141,9 @@ if (LIBCXX_ENABLE_NEW_DELETE_DEFINITIONS)
+     )
+ endif()
+ 
+-if (APPLE AND LLVM_USE_SANITIZER)
++# The sanitizer runtime is linked into the shared library only; the lookup
++# below has no answer for a static-only build.
++if (APPLE AND LLVM_USE_SANITIZER AND LIBCXX_ENABLE_SHARED)
+   if (("${LLVM_USE_SANITIZER}" STREQUAL "Address") OR
+       ("${LLVM_USE_SANITIZER}" STREQUAL "Address;Undefined") OR
+       ("${LLVM_USE_SANITIZER}" STREQUAL "Undefined;Address"))
+diff --git a/libcxxabi/src/CMakeLists.txt b/libcxxabi/src/CMakeLists.txt
+index dd23e9bb5bf7..9fc3314d4877 100644
+--- a/libcxxabi/src/CMakeLists.txt
++++ b/libcxxabi/src/CMakeLists.txt
+@@ -111,7 +111,9 @@ if (CXX_SUPPORTS_UNWINDLIB_EQ_NONE_FLAG AND LIBCXXABI_USE_LLVM_UNWINDER)
+ endif()
+ 
+ if ( APPLE )
+-  if (LLVM_USE_SANITIZER)
++  # The sanitizer runtime is linked into the shared library only; the lookup
++  # below has no answer for a static-only build.
++  if (LLVM_USE_SANITIZER AND LIBCXXABI_ENABLE_SHARED)
+     if (("${LLVM_USE_SANITIZER}" STREQUAL "Address") OR
+         ("${LLVM_USE_SANITIZER}" STREQUAL "Address;Undefined") OR
+         ("${LLVM_USE_SANITIZER}" STREQUAL "Undefined;Address"))

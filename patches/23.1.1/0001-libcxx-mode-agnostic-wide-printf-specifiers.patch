@@ -1,8 +1,8 @@
 diff --git a/libcxx/CMakeLists.txt b/libcxx/CMakeLists.txt
-index 00ea2deef196..720d4f21a3bf 100644
+index 31aaf2977a9a..f853707912c6 100644
 --- a/libcxx/CMakeLists.txt
 +++ b/libcxx/CMakeLists.txt
-@@ -737,9 +737,12 @@ function(cxx_add_windows_flags target)
+@@ -788,9 +788,12 @@ function(cxx_add_windows_flags target)
                                   # "insecure" functions which are standards
                                   # specified.
                                   _CRT_SECURE_NO_WARNINGS
