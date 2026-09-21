@@ -1,0 +1,44 @@
+--- a/clang/include/clang/Sema/CodeCompleteConsumer.h
++++ b/clang/include/clang/Sema/CodeCompleteConsumer.h
+@@ -37,6 +37,7 @@
+ class ASTContext;
+ class Decl;
+ class DeclContext;
++class Expr;
+ class FunctionDecl;
+ class FunctionTemplateDecl;
+ class IdentifierInfo;
+@@ -362,6 +363,11 @@
+   /// The type of the base object in a member access expression.
+   QualType BaseType;
+ 
++  /// The base expression of a member access, as written: its type is the
++  /// declared one, before any heuristic approximation of dependent types
++  /// went into \c BaseType.
++  const Expr *BaseExpr = nullptr;
++
+   /// The identifiers for Objective-C selector parts.
+   ArrayRef<const IdentifierInfo *> SelIdents;
+ 
+@@ -406,6 +412,11 @@
+   /// expression.
+   QualType getBaseType() const { return BaseType; }
+ 
++  /// Retrieve the base expression of a member-access completion, as
++  /// written; null outside member-access contexts.
++  const Expr *getBaseExpr() const { return BaseExpr; }
++  void setBaseExpr(const Expr *E) { BaseExpr = E; }
++
+   /// Retrieve the Objective-C selector identifiers.
+   ArrayRef<const IdentifierInfo *> getSelIdents() const { return SelIdents; }
+ 
+--- a/clang/lib/Sema/SemaCodeComplete.cpp
++++ b/clang/lib/Sema/SemaCodeComplete.cpp
+@@ -6028,6 +6028,7 @@
+ 
+   CodeCompletionContext CCContext(contextKind, ConvertedBaseType);
+   CCContext.setPreferredType(PreferredType);
++  CCContext.setBaseExpr(ConvertedBase.get());
+   ResultBuilder Results(SemaRef, CodeCompleter->getAllocator(),
+                         CodeCompleter->getCodeCompletionTUInfo(), CCContext,
+                         &ResultBuilder::IsMember);

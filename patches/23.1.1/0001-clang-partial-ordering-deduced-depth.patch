@@ -1,0 +1,11 @@
+--- a/clang/lib/Sema/SemaTemplateDeduction.cpp
++++ b/clang/lib/Sema/SemaTemplateDeduction.cpp
+@@ -5709,7 +5709,7 @@
+ 
+   TemplateParameterList *TemplateParams = FT2->getTemplateParameters();
+   SmallVector<DeducedTemplateArgument, 4> Deduced(TemplateParams->size());
+-  TemplateDeductionInfo Info(Loc);
++  TemplateDeductionInfo Info(Loc, TemplateParams->getDepth());
+ 
+   bool HasDeducedAnyParamFromReturnType = false;
+   if (TPOC != TPOC_Call) {

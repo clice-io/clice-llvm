@@ -1,0 +1,16 @@
+--- a/clang/lib/Sema/SemaCodeComplete.cpp
++++ b/clang/lib/Sema/SemaCodeComplete.cpp
+@@ -6145,10 +6145,9 @@
+ 
+   Results.ExitScope();
+ 
+-  if (!CompletionSucceded)
+-    return;
+-
+-  // Hand off the results found for code completion.
++  // Hand off the results found for code completion. A base whose class the
++  // heuristics could not find still yields the member-access context, so a
++  // consumer with its own resolution of dependent types gets to complete it.
+   HandleCodeCompleteResults(&SemaRef, CodeCompleter,
+                             Results.getCompletionContext(), Results.data(),
+                             Results.size());
